@@ -1,5 +1,7 @@
 // This will be like server but by using EXPRESS package
 const express = require("express");
+const morgan = require("morgan");
+// morgan is used for middleware, it's a function of middleware which we can use directly!
 
 // express app
 const app = express();
@@ -12,6 +14,27 @@ app.set("view engine", "ejs");
 
 app.listen(3000);
 
+// middleware and static files
+
+app.use(express.static("public"));
+
+// app.use(morgan("dev")); 
+
+// the morgan("dev") is giving informstion about the request, the entry point (200,401,302 etc), how much time was needed etc
+// its nothing more than a function which is used with middlewares and gives info about things. there are more function like this!
+
+
+
+// middleware here
+
+// app.use((req,res,next)=>{
+//     console.log("A new request was made");
+//     console.log("host: ", req.hostname);
+//     console.log("path: ", req.path);
+//     console.log("method: ", req.method)
+//     // after express runs the code, it doesn't know how to move on to the next middleware. that's why i have to use next:
+//     next();
+// })
 
 app.get("/", (req,res)=>{
     // status code will be defined automatically (That it's gonna be 200)
