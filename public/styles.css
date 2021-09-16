@@ -81,6 +81,34 @@ a h1 {
     margin-bottom: 30px;
 }
 
+.blogs a{
+    display:block;
+    margin:40px 0;
+    padding-left: 30px;
+    border-left: 6px solid crimson;
+}
+
+.blogs a:hover h3{
+    color:crimson;
+}
+
+.delete{
+    display:block;
+    width:10%;
+    margin:0 auto;
+    text-align:center;
+    border:1px solid crimson;
+    color:crimson;
+    padding:10px;
+    border-radius:7px;
+    
+}
+
+.delete:hover{
+    cursor:pointer;
+    color:white;
+    background-color: crimson;
+}
 
 form {
     display: flex;

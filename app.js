@@ -10,6 +10,7 @@ const app = express();
 // importing Model
 
 const Blog = require("./models/blog");
+const { render } = require("ejs");
 
 // database MONGO & MONGOOSE
 // this is actually the conntection string , which we will use to connect to the DB
@@ -82,6 +83,11 @@ app.set("view engine", "ejs");
 // middleware and static files
 
 app.use(express.static("public"));
+app.use(express.urlencoded({extended:true}))
+// the express.urlencoded takes all the url encoded data
+// and passes them in an object so that we can use them in the app.post
+// if i dont write it, it will accept the first data but then it will be undefined
+// i need it so that it keeps on taking the submit forms that i'm doing!
 
 // app.use(morgan("dev")); 
 
@@ -146,6 +152,45 @@ app.get("/blogs", (req,res)=>{
 })
 
 // the .sort({createdAt: -1}) is putting them in an order: the most actual on the top, the oldest on the bottom
+
+// POST REQUEST!
+
+// /blogs is the address from the create.ejs in the formn
+app.post("/blogs", (req,res)=>{
+    // console.log(req.body)
+    // the req. body is an object {title: ... , snippet: .... , body: ....}
+    const blog = new Blog(req.body);
+    blog.save()
+    .then((result)=>{
+        res.redirect("/blogs")
+    })
+    .catch(err=>{
+        console.log(err);
+    })
+    // save to save it to the database
+})
+
+// by doing :id it will be variable ,ATTENTION ITS NOT JUST ID!
+
+app.get('/blogs/:id', (req,res)=>{
+    // we will find a single document with this id, but first
+    // we need to extract it!
+    const id = req.params.id;
+    Blog.findById(id)
+    .then(result=>{
+        res.render("details", {blog: result, title:"Blog Details"})
+    })
+    .catch(err=>{
+        console.log(err);
+    })
+});
+
+// delete request
+
+
+// i want a get request to get me a single bloh
+
+
 
 
 app.get("/blogs/create", (req,res)=>{
