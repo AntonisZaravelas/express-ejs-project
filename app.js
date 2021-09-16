@@ -156,6 +156,10 @@ app.get("/blogs", (req,res)=>{
 // POST REQUEST!
 
 // /blogs is the address from the create.ejs in the formn
+
+
+
+
 app.post("/blogs", (req,res)=>{
     // console.log(req.body)
     // the req. body is an object {title: ... , snippet: .... , body: ....}
@@ -170,6 +174,16 @@ app.post("/blogs", (req,res)=>{
     // save to save it to the database
 })
 
+
+
+
+app.get("/blogs/create", (req,res)=>{
+    res.render("create", {title:"Create a new Blog"});
+})
+
+
+
+
 // by doing :id it will be variable ,ATTENTION ITS NOT JUST ID!
 
 app.get('/blogs/:id', (req,res)=>{
@@ -178,14 +192,30 @@ app.get('/blogs/:id', (req,res)=>{
     const id = req.params.id;
     Blog.findById(id)
     .then(result=>{
+        
         res.render("details", {blog: result, title:"Blog Details"})
     })
     .catch(err=>{
         console.log(err);
-    })
-});
+    });
+})
 
 // delete request
+
+
+
+app.delete("/blogs/:id",(req,res)=>{
+    const id = req.params.id;
+    // we cannot redirect in delete!
+    // we will send some json DATA
+    
+    Blog.findByIdAndDelete(id)
+    .then(result=>{
+        res.json({redirect: "/blogs"});
+    })
+    .catch(error=>console.log(error))
+})
+
 
 
 // i want a get request to get me a single bloh
@@ -193,9 +223,6 @@ app.get('/blogs/:id', (req,res)=>{
 
 
 
-app.get("/blogs/create", (req,res)=>{
-    res.render("create", {title:"Create a new Blog"});
-})
 
 // 404 pages
 

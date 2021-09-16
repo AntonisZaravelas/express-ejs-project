@@ -9,17 +9,18 @@
         <div class="content">
             <p><%= blog.body %></p>
         </div>
-        <a class="delete" data-doc="<%= blog._id %>">Delete Me</a>
+        <a class="delete" data-doc="<%= blog._id %>">delete</a>
     </div>
     <%- include("./partials/footer.ejs") %>
 
     <script>
-        const trashcan = document.querySelector("a.delete");
+        const trashcan = document.querySelector('a.delete');
         // dataset is everything that uses the data attribute.
-        trashcan.addEventListener("click", (e)=>{
+        trashcan.addEventListener('click', (e)=>{
             const endpoint = `/blogs/${trashcan.dataset.doc}`;
             // fetching API for delete
-
+            // this is an AJAX request
+            // response is the JSON data that comes back to us
             fetch(endpoint,{
                 // what kind of request?
                 // im making clear that it's gonna be a DELETE Request
@@ -27,8 +28,10 @@
                 // treat it like one
                 method: "DELETE"
             })
-            .then(()=>{})
+            .then((response)=>response.json())
+            .then(data=>window.location.href = data.redirect)
             .catch(error=>console.log(error));
+            // data.redirect is the /blogs
         })
     </script>
 </body>
