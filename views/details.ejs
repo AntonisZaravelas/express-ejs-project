@@ -1,0 +1,35 @@
+<html lang="en">
+<%- include("./partials/head.ejs") %>
+
+<body>
+    <%- include("./partials/nav.ejs") %>
+    
+    <div class="details content">
+        <h2><%= blog.title %></h2>
+        <div class="content">
+            <p><%= blog.body %></p>
+        </div>
+        <a class="delete" data-doc="<%= blog._id %>">Delete Me</a>
+    </div>
+    <%- include("./partials/footer.ejs") %>
+
+    <script>
+        const trashcan = document.querySelector("a.delete");
+        // dataset is everything that uses the data attribute.
+        trashcan.addEventListener("click", (e)=>{
+            const endpoint = `/blogs/${trashcan.dataset.doc}`;
+            // fetching API for delete
+
+            fetch(endpoint,{
+                // what kind of request?
+                // im making clear that it's gonna be a DELETE Request
+                // when it gets to the server, it knows it's a DELETE Request and we can
+                // treat it like one
+                method: "DELETE"
+            })
+            .then(()=>{})
+            .catch(error=>console.log(error));
+        })
+    </script>
+</body>
+</html>
