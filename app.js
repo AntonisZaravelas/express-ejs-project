@@ -1,10 +1,75 @@
 // This will be like server but by using EXPRESS package
 const express = require("express");
 const morgan = require("morgan");
-// morgan is used for middleware, it's a function of middleware which we can use directly!
+const mongoose = require("mongoose");
 
 // express app
 const app = express();
+
+
+// importing Model
+
+const Blog = require("./models/blog");
+
+// database MONGO & MONGOOSE
+// this is actually the conntection string , which we will use to connect to the DB
+
+const dbURI = 'mongodb+srv://antonisUser:kjkszpJ@nodeTuts.okqjq.mongodb.net/nodeTuts?retryWrites=true&w=majority';
+
+// now we connect the mongoose with the database from cloud.mongodb.com
+// in case the connection succeeds, the server will start listening to requests
+// not earlier, because theres a case that the user requests something before the database
+// loads
+
+mongoose.connect(dbURI)
+.then(result=>app.listen(3000))
+.catch(error=>console.log(error));
+
+// mongoose and mongo sandbox routes
+
+app.get("/add-blog", (req,res,next)=>{
+    const blog = new Blog({
+        title: "My experience with Dancing 3!",
+        snippet: "about my dancing",
+        body: "Lorem Lorem Lorem!"
+    });
+
+    blog.save()
+    .then((result)=>{
+        res.send(result)
+    })
+    .catch((err)=>{
+        console.log(err);
+    });
+})
+
+// to find all the blogs of the DB and safe them in localhost:3000/all-blogs
+
+app.get("/all-blogs", (req,res)=>{
+    Blog.find()
+    .then((result)=>{
+        res.send(result)
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
+})
+
+// to find a single blog
+
+app.get("/single-blog", (req,res)=>{
+    Blog.findById('614200db548361a8b925e707')
+    .then((result)=>{
+        res.send(result);
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
+})
+
+// morgan is used for middleware, it's a function of middleware which we can use directly!
+
+
 
 // register view engine, so that express knows that we will use ejs as an express engine
 app.set("view engine", "ejs");
@@ -12,7 +77,7 @@ app.set("view engine", "ejs");
 
 // listen for requests
 
-app.listen(3000);
+// app.listen(3000);
 
 // middleware and static files
 
@@ -45,12 +110,13 @@ app.get("/", (req,res)=>{
     // res.sendFile("/views/index.html", {root: __dirname}); for plain html 
 
     // for ejs we do : 
-    const blogs = [
-        {title: "Antonis goes shopping", snippet: "Lorem ipsum Lorem ipsum"},
-        {title: "Antonis goes to Ballet", snippet: "Lorem ipsum Lorem ipsum"},
-        {title: "Antonis is having breakfast",snippet: "Lorem ipsum Lorem ipsum"}
-    ];
-    res.render("index", { title: "Home", blogs});
+    // const blogs = [
+    //     {title: "Antonis goes shopping", snippet: "Lorem ipsum Lorem ipsum"},
+    //     {title: "Antonis goes to Ballet", snippet: "Lorem ipsum Lorem ipsum"},
+    //     {title: "Antonis is having breakfast",snippet: "Lorem ipsum Lorem ipsum"}
+    // ];
+    res.redirect("/blogs");
+    // for the shake of the tutorials, the "/" will redirect to "/blogs" so it will show all blogs
 });
 
 app.get("/about", (req,res)=>{
@@ -64,6 +130,23 @@ app.get("/about", (req,res)=>{
 // app.get("/about-us", (req,res)=>{
 //     res.redirect("/about");
 // });
+
+// blog routes
+
+// so here!
+app.get("/blogs", (req,res)=>{
+    // the result is the array of blogs [{},{},{}]
+    Blog.find().sort({createdAt: -1})
+    .then((result)=>{
+        res.render("index",{title: "All Blogs", blogs:result})
+    })
+    .catch((error)=>{
+        console.log(error);
+    })
+})
+
+// the .sort({createdAt: -1}) is putting them in an order: the most actual on the top, the oldest on the bottom
+
 
 app.get("/blogs/create", (req,res)=>{
     res.render("create", {title:"Create a new Blog"});
